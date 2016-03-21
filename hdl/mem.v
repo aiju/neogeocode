@@ -25,7 +25,7 @@ module mem(
 	output reg ddrdqspre
 );
 
-	parameter MHZ = 100;
+	parameter MHZ = 160;
 	
 	`define ns2CK(n) (((n) * MHZ + 999) / 1000)
 	`define max(a,b) ((a)>(b)?(a):(b))

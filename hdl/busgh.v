@@ -5,7 +5,10 @@ module busgh(
 	input wire [7:0] dsdata,
 	
 	output reg [7:0] g,
-	output reg [2:0] gc
+	output reg [2:0] gc,
+	
+	output reg [7:0] h,
+	output reg [2:0] hc
 );
 
 	reg [3:0] gstate, gstate_;
@@ -42,6 +45,38 @@ module busgh(
 			else
 				gstate_ = IDLE;
 		end
+		endcase
+	end
+	
+	reg [1:0] hstate, hstate_;
+	reg [2:0] hctr, hctr_, hc_;
+	localparam HINIT = 0;
+	localparam HIDLE = 1;
+	
+	localparam CFG = 8'b00001001;
+	
+	always @(posedge clk) begin
+		hstate <= hstate_;
+		hctr <= hctr_;
+		hc <= hc_;
+	end
+	initial begin
+		hstate = HINIT;
+		hctr = GDELAY;
+		h = CFG;
+	end
+	
+	always @(*) begin
+		hstate_ = hstate;
+		hctr_ = hctr == 0 ? 0 : hctr - 1;
+		hc_ = 0;
+		
+		case(hstate)
+		HINIT:
+			if(hctr != 0)
+				hc_[2] = hctr != GDELAY;
+			else
+				hstate_ = HIDLE;
 		endcase
 	end
 

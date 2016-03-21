@@ -38,6 +38,9 @@ module top(
 	output wire [2:0] gc,
 	output wire goe,
 	
+	output wire [7:0] h,
+	output wire [2:0] hc,
+	
 	output wire [14:0] ddra,
 	output wire [2:0] ddrba,
 	output wire ddrckp,
@@ -178,6 +181,8 @@ module top(
 		    // Outputs
 		    .g			(g[7:0]),
 		    .gc			(gc[2:0]),
+		    .h			(h[7:0]),
+		    .hc			(hc[2:0]),
 		    // Inputs
 		    .clk		(clk),
 		    .dsreq		(dsreq),
