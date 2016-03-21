@@ -20,7 +20,7 @@ module buscpld(
 
 	reg [3:0] pstate, pstate_;
 	reg [3:0] cstate, cstate_;
-	localparam PDELAY = 1;
+	localparam PDELAY = 0;
 	localparam CDELAY = 1;
 	
 	reg pctr, pctr_;

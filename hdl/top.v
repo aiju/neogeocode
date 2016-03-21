@@ -38,21 +38,59 @@ module top(
 	output wire [2:0] gc,
 	output wire goe,
 	
-	output wire [14:0] mem_a,
-	output wire [2:0] mem_ba,
-	output wire mem_ck,
-	output wire mem_ck_n,
-	output wire mem_cke,
-	output wire mem_cs_n,
-	output wire mem_ras_n,
-	output wire mem_we_n,
-	output wire mem_reset_n,
-	inout wire [7:0] mem_dq,
-	inout wire mem_dqs,
-	inout wire mem_dqs_n
+	output wire [14:0] ddra,
+	output wire [2:0] ddrba,
+	output wire ddrckp,
+	output wire ddrckn,
+	output wire ddrcke,
+	output wire ddrcs,
+	output wire ddrras,
+	output wire ddrcas,
+	output wire ddrwe,
+	output wire ddrreset,
+	inout wire [7:0] ddrdq,
+	inout wire ddrdqsp,
+	inout wire ddrdqsn
 );
 
-	assign resetout = 0;
+	/*AUTOWIRE*/
+	// Beginning of automatic wires (for undeclared instantiated-module outputs)
+	wire		a68kack;		// From buscpld of buscpld.v
+	wire [18:0]	a68kaddr;		// From buscpld of buscpld.v
+	wire		a68kreq;		// From bus68k of bus68k.v
+	wire		asack;			// From buscpld of buscpld.v
+	wire [16:0]	asaddr;			// From buscpld of buscpld.v
+	wire		asreq;			// From buscs of buscs.v
+	wire		bootack;		// From rom68k of rom68k.v
+	wire [15:0]	bootaddr;		// From switch of switch.v
+	wire [15:0]	bootdata;		// From rom68k of rom68k.v
+	wire		bootreq;		// From switch of switch.v
+	wire		clk;			// From memphy of memphy.v
+	wire [15:0]	ddrdqin;		// From memphy of memphy.v
+	wire [15:0]	ddrdqout;		// From mem of mem.v
+	wire		ddrdqspre;		// From mem of mem.v
+	wire		ddrdqt;			// From mem of mem.v
+	wire [7:0]	dsdata;			// From buscs of buscs.v
+	wire		dsreq;			// From buscs of buscs.v
+	wire		m68kack;		// From switch of switch.v
+	wire [19:0]	m68kaddr;		// From bus68k of bus68k.v
+	wire [15:0]	m68krdata;		// From switch of switch.v
+	wire		m68kreq;		// From bus68k of bus68k.v
+	wire [15:0]	m68kwdata;		// From bus68k of bus68k.v
+	wire		m68kwr;			// From bus68k of bus68k.v
+	wire		memack;			// From mem of mem.v
+	wire [19:0]	memaddr;		// From switch of switch.v
+	wire [31:0]	memrdata;		// From mem of mem.v
+	wire		memreq;			// From switch of switch.v
+	wire		memreset;		// From mem of mem.v
+	wire [31:0]	memwdata;		// From switch of switch.v
+	wire		memwr;			// From switch of switch.v
+	wire		msack;			// From romfix of romfix.v
+	wire [16:0]	msaddr;			// From buscs of buscs.v
+	wire [15:0]	msdata;			// From romfix of romfix.v
+	wire		msreq;			// From buscs of buscs.v
+	// End of automatics
+	assign resetout = memreset;
 	
 	wire resets;
 	sync resetsync(clk, reset, resets);
@@ -69,62 +107,6 @@ module top(
 		if(!resets)
 			rstctr <= 0;
 	end
-	
-	/*AUTOWIRE*/
-	// Beginning of automatic wires (for undeclared instantiated-module outputs)
-	wire		a68kack;		// From buscpld of buscpld.v
-	wire [18:0]	a68kaddr;		// From buscpld of buscpld.v
-	wire		a68kreq;		// From bus68k of bus68k.v
-	wire		afi_clk;		// From ddr3 of ddr3.v
-	wire		afi_half_clk;		// From ddr3 of ddr3.v
-	wire		afi_phy_clk;		// From ddr3 of ddr3.v
-	wire		afi_reset_export_n;	// From ddr3 of ddr3.v
-	wire		afi_reset_n;		// From ddr3 of ddr3.v
-	wire		asack;			// From buscpld of buscpld.v
-	wire [16:0]	asaddr;			// From buscpld of buscpld.v
-	wire		asreq;			// From buscs of buscs.v
-	wire [25:0]	avl_addr;		// From switch of switch.v
-	wire		avl_burstbegin;		// From switch of switch.v
-	wire [31:0]	avl_rdata;		// From ddr3 of ddr3.v
-	wire		avl_rdata_valid;	// From ddr3 of ddr3.v
-	wire		avl_read_req;		// From switch of switch.v
-	wire		avl_ready;		// From ddr3 of ddr3.v
-	wire [2:0]	avl_size;		// From switch of switch.v
-	wire [31:0]	avl_wdata;		// From switch of switch.v
-	wire		avl_write_req;		// From switch of switch.v
-	wire		bootack;		// From rom68k of rom68k.v
-	wire [15:0]	bootaddr;		// From switch of switch.v
-	wire [15:0]	bootdata;		// From rom68k of rom68k.v
-	wire		bootreq;		// From switch of switch.v
-	wire [7:0]	dsdata;			// From buscs of buscs.v
-	wire		dsreq;			// From buscs of buscs.v
-	wire		local_cal_fail;		// From ddr3 of ddr3.v
-	wire		local_cal_success;	// From ddr3 of ddr3.v
-	wire		local_init_done;	// From ddr3 of ddr3.v
-	wire		m68kack;		// From switch of switch.v
-	wire [19:0]	m68kaddr;		// From bus68k of bus68k.v
-	wire [15:0]	m68krdata;		// From switch of switch.v
-	wire		m68kreq;		// From bus68k of bus68k.v
-	wire [15:0]	m68kwdata;		// From bus68k of bus68k.v
-	wire		m68kwr;			// From bus68k of bus68k.v
-	wire		mem_cas_n;		// From ddr3 of ddr3.v
-	wire		mem_odt;		// From ddr3 of ddr3.v
-	wire		msack;			// From romfix of romfix.v
-	wire [16:0]	msaddr;			// From buscs of buscs.v
-	wire [15:0]	msdata;			// From romfix of romfix.v
-	wire		msreq;			// From buscs of buscs.v
-	wire		pll_addr_cmd_clk;	// From ddr3 of ddr3.v
-	wire		pll_avl_clk;		// From ddr3 of ddr3.v
-	wire		pll_avl_phy_clk;	// From ddr3 of ddr3.v
-	wire		pll_config_clk;		// From ddr3 of ddr3.v
-	wire		pll_locked;		// From ddr3 of ddr3.v
-	wire		pll_mem_clk;		// From ddr3 of ddr3.v
-	wire		pll_mem_phy_clk;	// From ddr3 of ddr3.v
-	wire		pll_write_clk;		// From ddr3 of ddr3.v
-	wire		pll_write_clk_pre_phy_clk;// From ddr3 of ddr3.v
-	// End of automatics
-	
-	wire clk = pll_avl_clk;
 	
 	buscpld buscpld(/*AUTOINST*/
 			// Outputs
@@ -207,12 +189,10 @@ module top(
 		      .m68krdata	(m68krdata[15:0]),
 		      .bootreq		(bootreq),
 		      .bootaddr		(bootaddr[15:0]),
-		      .avl_burstbegin	(avl_burstbegin),
-		      .avl_addr		(avl_addr[25:0]),
-		      .avl_wdata	(avl_wdata[31:0]),
-		      .avl_read_req	(avl_read_req),
-		      .avl_write_req	(avl_write_req),
-		      .avl_size		(avl_size[2:0]),
+		      .memaddr		(memaddr[19:0]),
+		      .memreq		(memreq),
+		      .memwdata		(memwdata[31:0]),
+		      .memwr		(memwr),
 		      // Inputs
 		      .clk		(clk),
 		      .m68kreq		(m68kreq),
@@ -221,9 +201,8 @@ module top(
 		      .m68kwr		(m68kwr),
 		      .bootack		(bootack),
 		      .bootdata		(bootdata[15:0]),
-		      .avl_ready	(avl_ready),
-		      .avl_rdata_valid	(avl_rdata_valid),
-		      .avl_rdata	(avl_rdata[31:0]));
+		      .memack		(memack),
+		      .memrdata		(memrdata[31:0]));
 	
 	rom68k rom68k(/*AUTOINST*/
 		      // Outputs
@@ -242,5 +221,45 @@ module top(
 		      .clk		(clk),
 		      .msreq		(msreq),
 		      .msaddr		(msaddr[16:0]));
+		      
+	mem mem(/*AUTOINST*/
+		// Outputs
+		.memreset		(memreset),
+		.memack			(memack),
+		.memrdata		(memrdata[31:0]),
+		.ddra			(ddra[14:0]),
+		.ddrba			(ddrba[2:0]),
+		.ddrcke			(ddrcke),
+		.ddrcs			(ddrcs),
+		.ddrras			(ddrras),
+		.ddrcas			(ddrcas),
+		.ddrwe			(ddrwe),
+		.ddrreset		(ddrreset),
+		.ddrdqout		(ddrdqout[15:0]),
+		.ddrdqt			(ddrdqt),
+		.ddrdqspre		(ddrdqspre),
+		// Inputs
+		.clk			(clk),
+		.memaddr		(memaddr[19:0]),
+		.memwr			(memwr),
+		.memwdata		(memwdata[31:0]),
+		.memreq			(memreq),
+		.ddrdqin		(ddrdqin[15:0]));
+	
+	memphy memphy(/*AUTOINST*/
+		      // Outputs
+		      .clk		(clk),
+		      .ddrckp		(ddrckp),
+		      .ddrckn		(ddrckn),
+		      .ddrdqin		(ddrdqin[15:0]),
+		      // Inouts
+		      .ddrdq		(ddrdq[7:0]),
+		      .ddrdqsp		(ddrdqsp),
+		      .ddrdqsn		(ddrdqsn),
+		      // Inputs
+		      .refclk		(refclk),
+		      .ddrdqout		(ddrdqout[15:0]),
+		      .ddrdqt		(ddrdqt),
+		      .ddrdqspre	(ddrdqspre));
 
 endmodule

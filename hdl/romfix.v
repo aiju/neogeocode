@@ -19,7 +19,7 @@ module romfix(
 		.OPERATION_MODE("ROM"),
 		.WIDTH_A(4),
 		.WIDTHAD_A(12),
-		.INIT_FILE("Z:/neogeocode/c/fix.mif"),
+		.INIT_FILE("../c/fix.mif"),
 		.ENABLE_RUNTIME_MOD("YES"),
 		.INSTANCE_NAME("SFIX")
 	) altsyncram0(

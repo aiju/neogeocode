@@ -30,8 +30,8 @@ module bus68k(
 	input wire [15:0] m68krdata
 );
 
-	wire portadrss, romoes, portwels, portweus;
-	reg portadrss0, romoes0, portwels0, portweus0;
+	wire ass, portadrss, romoes, portwels, portweus;
+	reg ass0, romoes0, portwels0, portweus0;
 	reg [15:0] dreg;
 	reg ardy, drdy;
 
@@ -39,8 +39,9 @@ module bus68k(
 	sync romoesync(clk, romoe, romoes);
 	sync portwelsync(clk, portwel, portwels);
 	sync portweusync(clk, portweu, portweus);
+	sync assync(clk, as, ass);
 	
-	assign a68kreq = !portadrss && portadrss0 || !romoes && romoes0;
+	assign a68kreq = !ass && ass0 && !portadrss || !romoes && romoes0;
 	assign m68kaddr = {romoe, a68kaddr};
 	assign m68kreq = !m68kwr ? a68kack : ardy && drdy;
 	assign m68kwr = !rw;
@@ -52,7 +53,7 @@ module bus68k(
 
 	always @(posedge clk or posedge rst) begin
 		if(rst) begin
-			portadrss0 <= 1;
+			ass0 <= 1;
 			romoes0 <= 1;
 			portwels0 <= 1;
 			portweus0 <= 1;
@@ -60,7 +61,7 @@ module bus68k(
 			ardy <= 0;
 			drdy <= 0;
 		end else begin
-			portadrss0 <= portadrss;
+			ass0 <= ass;
 			romoes0 <= romoes;
 			portwels0 <= portwels;
 			portweus0 <= portweus;
@@ -73,10 +74,10 @@ module bus68k(
 				m68kwdata[15:8] <= d68k[15:8];
 				drdy <= 1;
 			end
-			if(m68kack) begin
+			if(a68kack && m68kwr)
+				ardy <= 1;
+			if(m68kack)
 				dreg <= m68krdata;
-				ardy <= !rw;
-			end
 			if(ardy && drdy) begin
 				ardy <= 0;
 				drdy <= 0;

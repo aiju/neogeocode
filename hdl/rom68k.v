@@ -13,7 +13,7 @@ module rom68k(
 		.OPERATION_MODE("ROM"),
 		.WIDTH_A(16),
 		.WIDTHAD_A(10),
-		.INIT_FILE("Z:/neogeocode/c/code.mif"),
+		.INIT_FILE("../c/code.mif"),
 		.ENABLE_RUNTIME_MOD("YES"),
 		.INSTANCE_NAME("CODE")
 	) altsyncram0(
