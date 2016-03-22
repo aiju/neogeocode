@@ -1,4 +1,4 @@
-`default_nettype none
+`include "dat.vh"
 
 module memphy(
 	input wire refclk,
@@ -20,28 +20,24 @@ module memphy(
 	assign ddrckp = clk;
 	wire inclk, outclk;
 	wire clk90, clk270;
-	localparam MUL = 8;
-	localparam DIV = 5;
 	altpll #(
 		.OPERATION_MODE("NO_COMPENSATION"),
 		.INCLK0_INPUT_FREQUENCY(100000),
-		.CLK0_MULTIPLY_BY(MUL),
-		.CLK0_DIVIDE_BY(DIV),
-		.CLK1_MULTIPLY_BY(MUL),
-		.CLK1_DIVIDE_BY(DIV),
-		.CLK1_PHASE_SHIFT(50000*MUL/DIV),
-		.CLK2_MULTIPLY_BY(MUL),
-		.CLK2_DIVIDE_BY(DIV),
-		.CLK2_PHASE_SHIFT(25000*MUL/DIV),
-		.CLK3_MULTIPLY_BY(MUL),
-		.CLK3_DIVIDE_BY(DIV),
-		.CLK3_PHASE_SHIFT(75000*MUL/DIV),
-		.CLK4_MULTIPLY_BY(MUL),
-		.CLK4_DIVIDE_BY(DIV),
-		.CLK4_PHASE_SHIFT(-25000),
-		.CLK5_MULTIPLY_BY(MUL),
-		.CLK5_DIVIDE_BY(DIV),
-		.CLK5_PHASE_SHIFT(0)
+		.CLK0_MULTIPLY_BY(`CLKMUL),
+		.CLK1_MULTIPLY_BY(`CLKMUL),
+		.CLK2_MULTIPLY_BY(`CLKMUL),
+		.CLK3_MULTIPLY_BY(`CLKMUL),
+		.CLK4_MULTIPLY_BY(`CLKMUL),
+		.CLK5_MULTIPLY_BY(`CLKMUL),
+		.CLK0_DIVIDE_BY(`CLKDIV),
+		.CLK1_DIVIDE_BY(`CLKDIV),
+		.CLK2_DIVIDE_BY(`CLKDIV),
+		.CLK3_DIVIDE_BY(`CLKDIV),
+		.CLK4_DIVIDE_BY(`CLKDIV),
+		.CLK5_DIVIDE_BY(`CLKDIV),
+		.CLK1_PHASE_SHIFT(50000*`CLKMUL/`CLKDIV),
+		.CLK2_PHASE_SHIFT(25000*`CLKMUL/`CLKDIV),
+		.CLK3_PHASE_SHIFT(75000*`CLKMUL/`CLKDIV)
 	) pll(
 		.inclk(refclk),
 		.clk({inclk, outclk, clk270, clk90, ddrckn, clk})
@@ -67,7 +63,13 @@ module memphy(
 	always @(posedge clk90)
 		dqsdrive <= !ddrdqt || ddrdqspre;
 	
-	assign ddrdqsp = dqsdrive ? clk90 : 1'bz;
-	assign ddrdqsn = dqsdrive ? clk270 : 1'bz;
+	ALTDDIO_OUT #(.WIDTH(2)) dqsdr(
+		.datain_h(2'b01),
+		.datain_l(2'b10),
+		.dataout({ddrdqsn, ddrdqsp}),
+		.outclock(clk90),
+		.outclocken(1'b1),
+		.oe(dqsdrive)
+	);
 
 endmodule

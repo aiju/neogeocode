@@ -1,4 +1,4 @@
-`default_nettype none
+`include "dat.vh"
 
 module mem(
 	input wire clk,
@@ -24,10 +24,8 @@ module mem(
 	output reg ddrdqt,
 	output reg ddrdqspre
 );
-
-	parameter MHZ = 160;
 	
-	`define ns2CK(n) (((n) * MHZ + 999) / 1000)
+	`define ns2CK(n) (((n) * `MHZ + 999) / 1000)
 	`define max(a,b) ((a)>(b)?(a):(b))
 
 	localparam tRESET = `ns2CK(200000);
